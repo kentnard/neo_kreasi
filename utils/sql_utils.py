@@ -119,3 +119,41 @@ def get_furniture_details(fid : int) -> pd.DataFrame:
     
     except Exception as e:
         st.error(f"Error fetching furniture details: {e}. Please contact admin.")
+
+def add_new_furniture(name : str, description : str) -> None:
+    """
+    Add a new furniture to the table "furnitures". This assumes that the name and description are syntactically correct. The uniqueness test will be handled here. The description can be empty.
+
+    Returns:
+        None
+    """
+    try : 
+        cursor.execute(
+            "INSERT INTO furnitures (name, description) VALUES (?, ?)",
+            (name, description),
+        )
+        conn.commit()
+        st.success(f"Furniture '{name}' added successfully!")
+    except sqlite3.IntegrityError as e:
+        st.error(f"Error adding furniture: {e}. Please ensure the furniture name is unique.")
+    except Exception as e:
+        st.error(f"Error adding furniture: {e}. Please contact admin.")
+
+def add_new_material_to_furniture(fid : int, mid : int, amount : float) -> None:
+    """
+    Add a new material to a furniture in the table "furniture_materials". This assumes that the fid, mid and amount are syntactically correct. The uniqueness test will be handled here.
+
+    Returns:
+        None
+    """
+    try : 
+        cursor.execute(
+            "INSERT INTO furniture_materials (fid, mid, amount) VALUES (?, ?, ?)",
+            (fid, mid, amount),
+        )
+        conn.commit()
+        st.success(f"Material with ID '{mid}' added to furniture with ID '{fid}' successfully!")
+    except sqlite3.IntegrityError as e:
+        st.error(f"Error adding material to furniture: {e}. Please ensure the material is not already added to the furniture.")
+    except Exception as e:
+        st.error(f"Error adding material to furniture: {e}. Please contact admin.")

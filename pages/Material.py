@@ -45,10 +45,11 @@ with tab3:
 
     st.subheader("Select a material to edit and fill in the new values.")
     id_to_update = st.selectbox("Select material to edit",
-                             options=df["ID"].tolist(),
-                            format_func=lambda mid: df.loc[df["ID"] == mid, "Material Name"].values[0],
-                            key= "edit_selectbox"
-                            )
+                                options=df["ID"].tolist(),
+                                index=None,
+                                format_func=lambda mid: df.loc[df["ID"] == mid, "Material Name"].values[0],
+                                key= "edit_selectbox"
+                                )
     
     # Current values of the selected material
     row = df.loc[df["ID"] == id_to_update].iloc[0]
@@ -58,9 +59,18 @@ with tab3:
     
     # User input of new values 
     st.warning("Leave a field BLANK if you do not wish to change it.")
-    new_material_name2 = st.text_input("Material Name", help="Only insert material name here!", key="new_name_edit")
-    new_material_unit2 = st.text_input("Unit", help="Only insert material unit here!", key="new_unit_edit")
-    new_price2 = st.number_input("Purchase price", min_value=0, placeholder=10000, step=1, help="Only insert material purchase price here!", key="new_price_edit")
+    new_material_name2 = st.text_input("Material Name",
+                                       help="Only insert material name here!",
+                                       key="new_name_edit")
+    new_material_unit2 = st.text_input("Unit",
+                                       help="Only insert material unit here!",
+                                       key="new_unit_edit")
+    new_price2 = st.number_input("Purchase price",
+                                 min_value=0,
+                                 placeholder=10000,
+                                 step=1,
+                                 help="Only insert material purchase price here!",
+                                 key="new_price_edit")
 
     # Check if it's empty, if yes, assign the current value
     if st.button("Update material") :
