@@ -13,12 +13,16 @@ def get_all_materials() -> pd.DataFrame:
     Returns:
         pd.DataFrame: DataFrame containing all materials
     """
-    cursor.execute("SELECT * FROM materials")
-    conn.commit()
+    try :
+        cursor.execute("SELECT * FROM materials")
+        conn.commit()
 
-    all_materials = cursor.fetchall()
+        all_materials = cursor.fetchall()
 
-    return pd.DataFrame(all_materials, columns=["MID", "Material Name", "Unit", "Purchase Price"])
+        return pd.DataFrame(all_materials, columns=["MID", "Material Name", "Unit", "Purchase Price"])
+
+    except Exception as e:
+        st.error(f"Error fetching all materials: {e}. Please contact admin.")
 
 def add_new_material(name : str, unit : str, purchasePrice : float) -> None:
     """
@@ -74,3 +78,44 @@ def delete_material(mid : int) -> None:
         st.success(f"Material with ID {mid} deleted successfully!")
     except Exception as e:
         st.error(f"Error deleting material: {e}. Please contact admin.")
+
+def get_all_furnitures() -> pd.DataFrame:
+    """
+    Get all furnitures from the table "furnitures"
+
+    Returns:
+        pd.DataFrame: DataFrame containing all furnitures
+    """
+    try : 
+        cursor.execute("SELECT * FROM furnitures")
+        conn.commit()
+
+        all_furnitures = cursor.fetchall()
+
+        return pd.DataFrame(all_furnitures, columns=["FID", "Furniture Name", "Description"])
+
+    except Exception as e:
+        st.error(f"Error fetching all furnitures: {e}. Please contact admin.")
+
+def get_furniture_details(fid : int) -> pd.DataFrame:
+    """
+    Get the details of a furniture from the table "furniture_materials", given the FID.
+
+    Returns:
+        pd.DataFrame: DataFrame containing the furniture details
+    """
+    try :
+        cursor.execute("""SELECT f.name, m.name, fm.amount, m.unit, m.purchasePrice
+                       FROM furnitures f
+                       JOIN furniture_materials fm ON f.fid = fm.fid
+                       JOIN materials m on fm.mid = m.mid
+                       WHERE f.fid=?""", 
+                       (fid,))
+        conn.commit()
+
+        furniture_details = cursor.fetchall()
+
+        return pd.DataFrame(furniture_details, columns=["Furniture Name", "Material Name", "Amount", "Unit", "Purchase Price"])
+    
+    except Exception as e:
+        st.error(f"Error fetching furniture details: {e}. Please contact admin.")
