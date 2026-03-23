@@ -157,3 +157,39 @@ def add_new_material_to_furniture(fid : int, mid : int, amount : float) -> None:
         st.error(f"Error adding material to furniture: {e}. Please ensure the material is not already added to the furniture.")
     except Exception as e:
         st.error(f"Error adding material to furniture: {e}. Please contact admin.")
+
+def edit_furniture(fid : int, name : str, description : str) -> None:
+    """
+    Edit an existing furniture in the table "furnitures", given the FID, the name and description. This assumes that the name and description are syntactically correct. The uniqueness test will be handled here.
+
+    Returns:
+        None
+    """
+    try:
+        cursor.execute(
+            "UPDATE furnitures SET name=?, description=? WHERE FID=?",
+            (name, description, fid)
+        )
+        conn.commit()
+        st.success(f"Furniture with ID {fid} updated successfully!")
+    except sqlite3.IntegrityError as e:
+        st.error(f"Error editing furniture: {e}. Please ensure the furniture name has not existed yet.")
+    except Exception as e:
+        st.error(f"Error editing furniture: {e}. Please contact admin.")
+
+def delete_furniture(fid : int) -> None:
+    """
+    Delete an existing furniture in the table "furnitures", given the FID.
+
+    Returns:
+        None
+    """
+    try:
+        cursor.execute(
+            "DELETE FROM furnitures WHERE FID=?",
+            (fid,)
+        )
+        conn.commit()
+        st.success(f"Furniture with ID {fid} deleted successfully!")
+    except Exception as e:
+        st.error(f"Error deleting furniture: {e}. Please contact admin.")

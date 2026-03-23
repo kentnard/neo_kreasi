@@ -51,37 +51,41 @@ with tab3:
                                 key= "edit_selectbox"
                                 )
     
-    # Current values of the selected material
-    row = df.loc[df["ID"] == id_to_update].iloc[0]
-    current_name = row["Material Name"]
-    current_unit = row["Unit"]
-    current_price = row["Purchase Price"]
+    # Forces the user to choose a material
+    if id_to_update is None : 
+        st.info("Please select a material to edit.")
+    else :
+        # Current values of the selected material
+        row = df.loc[df["ID"] == id_to_update].iloc[0]
+        current_name = row["Material Name"]
+        current_unit = row["Unit"]
+        current_price = row["Purchase Price"]
     
-    # User input of new values 
-    st.warning("Leave a field BLANK if you do not wish to change it.")
-    new_material_name2 = st.text_input("Material Name",
-                                       help="Only insert material name here!",
-                                       key="new_name_edit")
-    new_material_unit2 = st.text_input("Unit",
-                                       help="Only insert material unit here!",
-                                       key="new_unit_edit")
-    new_price2 = st.number_input("Purchase price",
-                                 min_value=0,
-                                 placeholder=10000,
-                                 step=1,
-                                 help="Only insert material purchase price here!",
-                                 key="new_price_edit")
+        # User input of new values 
+        st.warning("Leave a field BLANK if you do not wish to change it.")
+        new_material_name2 = st.text_input("New Material Name",
+                                        help="Only insert material name here!",
+                                        key="new_name_edit")
+        new_material_unit2 = st.text_input("New Unit",
+                                        help="Only insert material unit here!",
+                                        key="new_unit_edit")
+        new_price2 = st.number_input("New Purchase price",
+                                    min_value=0,
+                                    placeholder=10000,
+                                    step=1,
+                                    help="Only insert material purchase price here!",
+                                    key="new_price_edit")
 
-    # Check if it's empty, if yes, assign the current value
-    if st.button("Update material") :
-        if new_material_name2 == "" and new_material_unit2 == "" and new_price2 == 0 :
-            st.error("Please fill in AT LEAST ONE field to update.")
-        else :
-            new_material_name2 = new_material_name2 or current_name
-            new_material_unit2 = new_material_unit2 or current_unit
-            new_price2 = new_price2 if new_price2 not in (0, None) else current_price
+        # Check if it's empty, if yes, assign the current value
+        if st.button("Update material") :
+            if new_material_name2 == "" and new_material_unit2 == "" and new_price2 == 0 :
+                st.error("Please fill in AT LEAST ONE field to update.")
+            else :
+                new_material_name2 = new_material_name2 or current_name
+                new_material_unit2 = new_material_unit2 or current_unit
+                new_price2 = new_price2 if new_price2 not in (0, None) else current_price
 
-            edit_material(id_to_update, new_material_name2, new_material_unit2, new_price2)
+                edit_material(id_to_update, new_material_name2, new_material_unit2, new_price2)
 
 with tab4:
     st.subheader("Current materials in the database")
@@ -93,8 +97,10 @@ with tab4:
     st.warning("**Warning:** Deleting a material is irreversible and may affect related furniture. Please consider EDITING it before deleting it.")
 
     id_to_delete = st.selectbox("Select material to delete",
-                             options=df["ID"].tolist(),
-                            format_func=lambda mid: df.loc[df["ID"] == mid, "Material Name"].values[0], key= "delete_selectbox"
-                            )
+                                options=df["ID"].tolist(),
+                                index=None,
+                                placeholder="Select a material to delete",
+                                format_func=lambda mid: df.loc[df["ID"] == mid, "Material Name"].values[0], key= "delete_selectbox"
+                                )
     if st.button("Delete material"):
         confirm_delete_material_dialog(id_to_delete)
