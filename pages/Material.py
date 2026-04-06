@@ -19,7 +19,9 @@ with tab1:
     st.subheader("Current materials in the database")
     df = get_all_materials()
     df.rename(columns={"MID": "ID"}, inplace=True)
-    st.dataframe(df, hide_index=True)
+    st.dataframe(df.style.format({
+        "Purchase Price": lambda x: f"{int(x):,}".replace(",", ".")
+    }), hide_index=True)
 
 # Add new materials to the database
 with tab2:
@@ -41,7 +43,9 @@ with tab3:
     st.subheader("Current materials in the database")
     df = get_all_materials()
     df.rename(columns={"MID": "ID"}, inplace=True)
-    st.dataframe(df, hide_index=True)
+    st.dataframe(df.style.format({
+        "Purchase Price": lambda x: f"{int(x):,}".replace(",", ".")
+    }), hide_index=True)
 
     st.subheader("Select a material to edit and fill in the new values.")
     id_to_update = st.selectbox("Select material to edit",
@@ -91,7 +95,9 @@ with tab4:
     st.subheader("Current materials in the database")
     df = get_all_materials()
     df.rename(columns={"MID": "ID"}, inplace=True)
-    st.dataframe(df, hide_index=True)
+    st.dataframe(df.style.format({
+        "Purchase Price": lambda x: f"{int(x):,}".replace(",", ".")
+    }), hide_index=True)
 
     st.subheader("Select a material to delete.")
     st.warning("**Warning:** Deleting a material is irreversible and may affect related furniture. Please consider EDITING it before deleting it.")

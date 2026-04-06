@@ -1,3 +1,7 @@
 # Byte-compiled / optimized / DLL files
 *.py[cod]
 *$py.class
+
+# SQL files
+*.sqbpro
+*.db

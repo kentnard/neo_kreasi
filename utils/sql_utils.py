@@ -87,12 +87,21 @@ def get_all_furnitures() -> pd.DataFrame:
         pd.DataFrame: DataFrame containing all furnitures
     """
     try : 
-        cursor.execute("SELECT * FROM furnitures")
+        cursor.execute("""SELECT f.fid, 
+                       f.name,
+                       f.description,
+                       coalesce(SUM(fm.amount*m.purchasePrice), 0) AS total_price
+                        FROM furnitures f
+                        LEFT JOIN furniture_materials fm
+                            ON f.fid = fm.fid
+                        LEFT JOIN materials m
+                            ON fm.mid = m.mid
+                        GROUP BY f.fid, f.name, f.description""")
         conn.commit()
 
         all_furnitures = cursor.fetchall()
 
-        return pd.DataFrame(all_furnitures, columns=["FID", "Furniture Name", "Description"])
+        return pd.DataFrame(all_furnitures, columns=["FID", "Furniture Name", "Description", "Total Purchase Price"])
 
     except Exception as e:
         st.error(f"Error fetching all furnitures: {e}. Please contact admin.")
