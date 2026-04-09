@@ -15,6 +15,7 @@ st.title("Furniture Management")
 tab1, tab2, tab3, tab4 = st.tabs(["View Furnitures", "Add Furnitures", "Edit Furnitures", "Delete Furnitures"])
 
 with tab1:
+    # View Furniture
     st.subheader("Current furnitures in the database")
     df = get_all_furnitures()
     df.rename(columns={"FID": "ID"}, inplace=True)
@@ -31,13 +32,16 @@ with tab1:
     st.dataframe(df_details.style.format({
         "Purchase Price": lambda x: f"{int(x):,}".replace(",", "."),
         "Amount": format_amount,
+        "Cost": lambda x: f"{int(x):,}".replace(",", "."),
     }), hide_index=True)
 
-    df_details["Cost"] = df_details["Amount"] * df_details["Purchase Price"]
-
     current_furniture_name = df.loc[df["ID"] == furniture_id_show, "Furniture Name"].values[0]
-    st.write(f"**Total cost:** : Rp{df_details['Cost'].sum():,.0f}".replace(",", "."))
-
+    st.markdown(
+    f"<p style='font-size:25px; font-weight:bold;'>"
+    f"Total cost: Rp{df_details['Cost'].sum():,.0f}".replace(",", ".") +
+    "</p>",
+    unsafe_allow_html=True
+)
 
 with tab2:
     # Only add new furniture
@@ -69,7 +73,17 @@ with tab2:
                                       placeholder="Select  a furniture",
                                       format_func=lambda fid: df.loc[df["ID"] == fid, "Furniture Name"].values[0],
                                       key="add_material_furniture_selectbox")
+    
+    # Show the current materials of the chosen furniture
+    df_details = get_furniture_details(selected_furniture)
+    if len(df_details) > 0 :
+        st.dataframe(df_details.style.format({
+            "Purchase Price": lambda x: f"{int(x):,}".replace(",", "."),
+            "Amount": format_amount,
+            "Cost": lambda x: f"{int(x):,}".replace(",", "."),
+        }), hide_index=True)
 
+    # Show all materials
     df_all_materials = get_all_materials()
     df_all_materials.rename(columns={"MID": "ID"}, inplace=True)
 
@@ -92,6 +106,7 @@ with tab2:
             st.error("Please fill in ALL fields.")
             
 with tab3:
+    # Edit furniture (name & desc only)
     st.subheader("Current furniture in the database")
     df = get_all_furnitures()
     df.rename(columns={"FID": "ID"}, inplace=True)
@@ -138,6 +153,7 @@ with tab3:
     st.write("Under consturction")
 
 with tab4:
+    # Delete the furniture
     st.subheader("Current furniture in the database")
     df = get_all_furnitures()
     df.rename(columns={"FID": "ID"}, inplace=True)

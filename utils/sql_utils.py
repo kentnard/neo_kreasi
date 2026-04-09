@@ -124,7 +124,10 @@ def get_furniture_details(fid : int) -> pd.DataFrame:
 
         furniture_details = cursor.fetchall()
 
-        return pd.DataFrame(furniture_details, columns=["Furniture Name", "Material Name", "Amount", "Unit", "Purchase Price"])
+        df = pd.DataFrame(furniture_details, columns=["Furniture Name", "Material Name", "Amount", "Unit", "Purchase Price"])
+
+        df["Cost"] = df["Amount"] * df["Purchase Price"]
+        return df
     
     except Exception as e:
         st.error(f"Error fetching furniture details: {e}. Please contact admin.")
